@@ -1,19 +1,14 @@
+# 1. On part de l'image n8n officielle (Alpine + Node)
 FROM n8nio/n8n:latest
+
+# 2. Passe en root pour installer le module globalement
 USER root
 
-RUN mkdir -p /home/node/.n8n/custom \
- && npm install --omit=dev --prefix /home/node/.n8n/custom n8n-nodes-mcp@0.1.15 \
- && echo "── dist/nodes ──" \
- && ls -1 /home/node/.n8n/custom/node_modules/n8n-nodes-mcp/dist/nodes
+# 3. Installe MCP client + trigger en global (avec --unsafe-perm pour éviter les erreurs de droits)
+RUN npm install -g --unsafe-perm n8n-nodes-mcp@latest
 
-ENV N8N_CUSTOM_EXTENSIONS="/home/node/.n8n/custom"
-
+# 4. Repasse en node (utilisateur non-priviliégié)
 USER node
-
-+ npm install -g n8n-nodes-mcp@latest
-── dist/nodes ──
-McpClient.node.js
-McpServerTrigger.node.js
 
 
 
