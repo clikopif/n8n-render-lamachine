@@ -1,10 +1,13 @@
-# Image officielle n8n
 FROM n8nio/n8n:latest
 
-# ── Installe le paquet MCP en root (sinon EACCES) ──
 USER root
-RUN npm install -g --unsafe-perm --omit=dev n8n-nodes-mcp@latest
+# Installe MCP dans un dossier privé
+RUN mkdir -p /home/node/.n8n/custom \
+ && npm install --omit=dev --prefix /home/node/.n8n/custom n8n-nodes-mcp@0.1.23 \
+ && echo "── Contenu custom ──" \
+ && ls -1 /home/node/.n8n/custom/node_modules/n8n-nodes-mcp/dist/nodes
 
-# Reviens à l’utilisateur non-privilégié recommandé par n8n
+# Indique à n8n où chercher
+ENV N8N_CUSTOM_EXTENSIONS="/home/node/.n8n/custom"
+
 USER node
-# ──────────────────────────────────────────────
