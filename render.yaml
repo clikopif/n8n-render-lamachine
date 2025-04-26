@@ -48,5 +48,4 @@ databases:
     region: frankfurt # optional (defaults to oregon)
     plan: free
 
-- key: N8N_SKIP_LOAD_PACKAGE_MANAGER_INFORMATION
-  value: 'true'
+
