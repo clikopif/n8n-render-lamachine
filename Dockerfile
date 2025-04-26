@@ -1,15 +1,16 @@
-# Dockerfile à la racine de TON dépôt n8n
 FROM n8nio/n8n:latest
 USER root
 
-# Outils indispensables dans l'image Alpine de n8n
-RUN apk add --no-cache git curl tar gzip
+# 1. Outils nécessaires + deps de build (node-gyp)
+RUN apk add --no-cache git curl tar gzip python3 make g++  # python/make/g++ = build deps
 
-# Clone public du node MCP, puis installation
+# 2. Clone, installe, compile, puis vérifie
 RUN git clone --depth 1 https://github.com/nerding-io/n8n-nodes-mcp /home/node/.n8n/custom \
- && cd /home/node/.n8n/custom && npm install --omit=dev \
- && ls -1 dist/nodes    # --> doit lister McpClient.node.js et McpServerTrigger.node.js
+ && cd /home/node/.n8n/custom \
+ && npm install --omit=dev \
+ && npm run build        # ← génère le dossier dist/ • prend ~20 s \
+ && echo "── dist/nodes ──" && ls -1 dist/nodes
 
-# Indique à n8n où se trouve le node
+# 3. Dossier des extensions custom
 ENV N8N_CUSTOM_EXTENSIONS="/home/node/.n8n/custom"
 USER node
